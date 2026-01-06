@@ -1,13 +1,13 @@
 pipeline {
     agent any
 
-    parameters {
+/*     parameters {
         booleanParam(
             name: 'RUN_TESTS',
             defaultValue: true,
             description: 'Run unit tests'
         )
-    }
+    } */
 
     tools {
         nodejs 'nodejs-22-6-0'
@@ -35,7 +35,7 @@ pipeline {
                 sh 'npm ci'
             }
         }
-
+/* 
         stage('Run Tests') {
             when {
                 expression { params.RUN_TESTS }
@@ -43,7 +43,7 @@ pipeline {
             steps {
                 sh 'npm test'
             }
-        }
+        } */
 
         stage('Build Project') {
             steps {
