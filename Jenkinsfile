@@ -7,7 +7,7 @@ pipeline{
     // }
     
     tools{
-         'nodejs-22-6-0', 'nodejs'
+         nodejs 'nodejs-22-6-0'
 
     }
 
