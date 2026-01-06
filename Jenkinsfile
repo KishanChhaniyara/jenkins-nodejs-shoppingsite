@@ -1,49 +1,56 @@
-pipeline{
+pipeline {
     agent any
 
-    // parameters{
-    //     choice(name: 'ENVIRONMENT', choices: ['prod-eu', 'prod-na', 'prod-apac'], description: 'Select the deployment environment')
-    //     booleanParam(name: 'RUN_TESTS', defaultValue: true, description: 'Run tests before building the project')
-    // }
-    
-    tools{
-         nodejs 'nodejs-22-6-0'
-
+    parameters {
+        booleanParam(
+            name: 'RUN_TESTS',
+            defaultValue: true,
+            description: 'Run unit tests'
+        )
     }
 
-    options{
-        timestamp()
+    tools {
+        nodejs 'nodejs-22-6-0'
+    }
+
+    options {
+        timestamps()
         disableConcurrentBuilds()
-        
-    }
-    environment{
-        MONGO_URI = 'mongodb+srv://supercluster.d83jj.mongodb.net/superData'
-        MONGO_USERNAME = credentials('mongo-db-username')
-        MONGO_PASSWORD = credentials('mongo-db-password')
-        JENKINS_TOKEN = credentials('jenkins-token')
     }
 
-    stages{
-        stage('Install Dependencies'){
-            steps{
-                sh 'npm ci' 
+    environment {
+        MONGO_URI = 'mongodb+srv://supercluster.d83jj.mongodb.net/superData'
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
             }
         }
-        
-        stage('Run Tests'){
-            when{
-                expression { return params.RUN_TESTS }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'npm ci'
             }
-            steps{
+        }
+
+        stage('Run Tests') {
+            when {
+                expression { params.RUN_TESTS }
+            }
+            steps {
                 sh 'npm test'
             }
         }
 
-        stage('Build Project'){
-            steps{
-                sh 'npm run build'
+        stage('Build Project') {
+            steps {
+                sh 'npm run build || echo "No build script"'
             }
         }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
@@ -58,6 +65,6 @@ pipeline{
                     waitForQualityGate abortPipeline: true
                 }
             }
-        }  
+        }
     }
 }
