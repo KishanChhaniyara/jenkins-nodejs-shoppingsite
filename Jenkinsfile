@@ -19,7 +19,7 @@ pipeline {
     }
 
     environment {
-        MONGO_URI = 'mongodb+srv://supercluster.d83jj.mongodb.net/superData'
+       // MONGO_URI = 'mongodb+srv://supercluster.d83jj.mongodb.net/superData'
     }
 
     stages {
@@ -32,7 +32,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm ci'
+                sh 'npm install'
             }
         }
 /* 
